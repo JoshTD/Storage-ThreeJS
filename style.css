@@ -19,27 +19,37 @@ body {
     display: grid;
     grid-template: 1fr 0fr / 4fr 1fr;
     grid-template-areas:
-        "viewer model-list";
+        'viewer model-list';
+        /*'viewer model-loader';*/
     height: 100%;
 }
 
 .viewer {
-    width: 100%;
     grid-area: viewer;
+    /*position: fixed;*/
+    /*width: 80%;*/
     background-color: lightgreen;
 }
 
 .model-list {
     grid-area: model-list;
+    height: 100%;
     background-color: lightpink;
 }
 
 .model-link {
     font-size: 1.25em;
-    padding: 0.75em 0em;
+    /*padding: 0.75em 0em;*/
     font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
     text-align: center;
-    
     background-color: lightyellow;
+    width: 100%;
+}
+.model-loader {
+    grid-area: model-loader;
+    vertical-align: bottom;
+    padding: 1em 0em;
+    text-align: center;
+    background-color: mediumslateblue;
     width: 100%;
 }

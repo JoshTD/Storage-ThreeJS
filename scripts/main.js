@@ -11,6 +11,7 @@ const near = 0.1;
 const far = 100000;
 const camera_pos = { x: 2000, y: 1000, z: -2000 };
 const spotlight_pos = { x: 5000, y: 5000, z: 5000 };
+const model_scale = 1000;
 const baseUrl = 'http://localhost:3000/models'; // Адрес базы данных с моделями
 
 // Создание сцены
@@ -48,7 +49,7 @@ manager.onError = function (url) {
 //const loader = new GLTFLoader(manager);
 const loader = new GLTFLoader();
 function modelLoader(string) {
-    loader.parse(string, './', function (gltf) {
+    loader.parse(string, undefined, function (gltf) {
         let model = initModel(gltf.scene)
         scene.add(model);
     }, function (error) {
@@ -59,7 +60,7 @@ function modelLoader(string) {
 function initModel(scene) {
     let model = scene;
     model.position.set(0, 0, 0);
-    model.scale.set(1000, 1000, 1000);
+    model.scale.set(model_scale, model_scale, model_scale);
     return model;
 }
 
@@ -92,7 +93,7 @@ for (let id of ids) {
     console.log(id);
 }
 
-// вызов функции анимации
+// Вызов функции анимации
 animate();
 
 function animate() {
