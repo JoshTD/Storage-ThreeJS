@@ -1,0 +1,8 @@
+{
+    "models": [
+        {
+            "id": "pacman",
+            "scene": { }
+        }
+    ]
+}
