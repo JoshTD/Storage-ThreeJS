@@ -8,9 +8,10 @@ const width = window.innerWidth * 0.8;
 const height = window.innerHeight;
 const aspect = width / height;
 const near = 0.1;
-const far = 10000;
+const far = 100000;
 const camera_pos = { x: 2000, y: 1000, z: -2000 };
 const spotlight_pos = { x: 5000, y: 5000, z: 5000 };
+const baseUrl = 'http://localhost:3000/models'; // Адрес базы данных с моделями
 
 // Создание сцены
 var scene = new THREE.Scene();
@@ -19,25 +20,11 @@ var camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height);
 var controls = new OrbitControls(camera, renderer.domElement);
-let viewerBox = document.getElementById('viewer');
+var viewerBox = document.getElementById('viewer');
+var listBox = document.getElementById('model-list');
 viewerBox.appendChild(renderer.domElement);
 
-camera.position.set(camera_pos.x, camera_pos.y, camera_pos.z);
-controls.update();
-
-// Добавление общего освещения
-let ambientLight = new THREE.AmbientLight(0xfafafa, 0.9);
-scene.add(ambientLight);
-
-// Добавление луча света
-let spotLight = new THREE.SpotLight(0x606060);
-spotLight.position.set(spotlight_pos.x, spotlight_pos.y, spotlight_pos.z);
-spotLight.shadow.mapSize.width = 1024;
-spotLight.shadow.mapSize.height = 1024;
-spotLight.shadow.camera.near = 0.1;
-spotLight.shadow.camera.far = 10000;
-spotLight.shadow.camera.fov = 75;
-scene.add(spotLight);  
+clearScene();
 
 // Создание менеджера загруки моделей
 const manager = new THREE.LoadingManager();
@@ -58,7 +45,8 @@ manager.onError = function (url) {
 };
 
 // Создание загрузчика моделей
-const loader = new GLTFLoader(manager);
+//const loader = new GLTFLoader(manager);
+const loader = new GLTFLoader();
 function modelLoader(string) {
     loader.parse(string, './', function (gltf) {
         let model = initModel(gltf.scene)
@@ -78,16 +66,31 @@ function initModel(scene) {
 function loadModel(url) {
     fetch(url)
     .then(res => res.json())
-    .then((obj) => {
-        console.log(obj.scene);
-        modelLoader(JSON.stringify(obj.scene));
+    .then((object) => {
+        modelLoader(JSON.stringify(object.scene));
     })
     .catch(err => { throw err });
 }
 
-// Загрузка модели по url
-let url = 'http://localhost:3000/models/pacman';
-loadModel(url);
+function findAllModelIds() {
+    let ids = [];
+    fetch(baseUrl)
+    .then(res => res.json())
+    .then((objects) => {
+        for (let item of objects) {
+            addModelListItem(item.id);
+            ids.push(item.id);
+        }
+    })
+    .catch(err => { throw err });
+    return ids;
+}
+
+// Загрузка списка моделей
+let ids = await findAllModelIds();
+for (let id of ids) {
+    console.log(id);
+}
 
 // вызов функции анимации
 animate();
@@ -97,6 +100,48 @@ function animate() {
     controls.update();
     renderer.render(scene, camera);
 };
+
+function addModelListItem(id) {
+    let listItem = document.createElement('div');
+    listItem.id = id;
+    listItem.className = 'model-link';
+    listItem.innerHTML = id;
+    listItem.addEventListener('click', () => onClick(listItem.id));
+    listBox.appendChild(listItem);
+}
+
+function onClick(id) {
+    loadModelToScene(getUrl(id));
+}
+
+function getUrl(id) {
+    return baseUrl + '/' + id;
+}
+
+function loadModelToScene(url) {
+    clearScene();
+    loadModel(url);
+}
+
+function clearScene() {
+    scene.clear();
+
+    camera.position.set(camera_pos.x, camera_pos.y, camera_pos.z);
+
+    controls.update();
+
+    let ambientLight = new THREE.AmbientLight(0xfafafa, 0.9);
+    scene.add(ambientLight)
+    
+    let spotLight = new THREE.SpotLight(0x606060);
+    spotLight.position.set(spotlight_pos.x, spotlight_pos.y, spotlight_pos.z);
+    spotLight.shadow.mapSize.width = 1024;
+    spotLight.shadow.mapSize.height = 1024;
+    spotLight.shadow.camera.near = 0.1;
+    spotLight.shadow.camera.far = 100000;
+    spotLight.shadow.camera.fov = 75;
+    scene.add(spotLight);
+}
 
 function ResizeCanvas() {
     let width = window.innerWidth * 0.8;

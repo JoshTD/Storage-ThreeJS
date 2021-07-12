@@ -33,3 +33,13 @@ body {
     grid-area: model-list;
     background-color: lightpink;
 }
+
+.model-link {
+    font-size: 1.25em;
+    padding: 0.75em 0em;
+    font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+    text-align: center;
+    
+    background-color: lightyellow;
+    width: 100%;
+}
