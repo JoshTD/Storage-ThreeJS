@@ -4,15 +4,20 @@
 <head>
     <meta charset=utf-8>
     <title>Storage Three.js</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
     <div class="main">
         <div class="viewer" id="viewer"></div>
-        <div class="model-list" id="model-list"></div>
-        <div class="model-loader" id="model-loader">
-            
+        <div class="model-list card" id="model-list"></div>
+        <div class="model-loader card" id="model-loader">
+            <div class="container">
+                <label for="formFile" class="form-label">Загрузка новой модели (.gltf)</label>
+                <input class="form-control" type="text" placeholder="Введите id для модели">
+                <input class="form-control mt-3" type="file" id="formFile">
+                <button class="btn btn-primary mt-3">Загрузить модель</button>
+            </div>
         </div>
     </div>
 

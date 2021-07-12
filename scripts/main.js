@@ -16,7 +16,7 @@ const baseUrl = 'http://localhost:3000/models'; // Адрес базы данн�
 
 // Создание сцены
 var scene = new THREE.Scene();
-scene.background = new THREE.Color('lightgray');
+scene.background = new THREE.Color('white');
 var camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height);
@@ -105,7 +105,8 @@ function animate() {
 function addModelListItem(id) {
     let listItem = document.createElement('div');
     listItem.id = id;
-    listItem.className = 'model-link';
+    listItem.classList.add('model-link');
+    listItem.classList.add('card');
     listItem.innerHTML = id;
     listItem.addEventListener('click', () => onClick(listItem.id));
     listBox.appendChild(listItem);
