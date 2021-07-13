@@ -49,6 +49,7 @@ manager.onError = function (url) {
 //const loader = new GLTFLoader(manager);
 const loader = new GLTFLoader();
 function modelLoader(string) {
+    clearScene();
     loader.parse(string, undefined, function (gltf) {
         let model = initModel(gltf.scene)
         scene.add(model);
@@ -73,25 +74,73 @@ function loadModel(url) {
     .catch(err => { throw err });
 }
 
-function findAllModelIds() {
-    let ids = [];
+function initModelList() {
     fetch(baseUrl)
     .then(res => res.json())
     .then((objects) => {
         for (let item of objects) {
             addModelListItem(item.id);
-            ids.push(item.id);
         }
     })
     .catch(err => { throw err });
-    return ids;
 }
 
 // Загрузка списка моделей
-let ids = await findAllModelIds();
-for (let id of ids) {
-    console.log(id);
+await initModelList();
+
+var model;
+var idInput = document.getElementById('id-input');
+var fileInput = document.getElementById('file-input');
+fileInput.addEventListener('change', () => {
+    let file = fileInput.files[0];
+
+    new Response(file).json().then(json => {
+        model = json;
+    }, error => console.error(error));
+});
+
+
+function onUpload() {
+    if (idInput.value == ''){
+        console.error("Пустой id файла");
+        return;
+    }
+    if (model == undefined) {
+        console.error("Пустой файл модели");
+        return;
+    }
+    
+    modelLoader(JSON.stringify(model));
+    sendModel(idInput.value, model);
+    addModelListItem(idInput.value);
+
+    model = undefined;
+    idInput.value = '';
+    fileInput.value = null;
 }
+
+async function sendModel(id, model) {
+    let object = {
+        id: id,
+        scene: model
+    }
+
+    try {
+        await fetch(baseUrl, {
+            method: 'POST',
+            body: JSON.stringify(object),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        });
+        console.log('Модель успешно загружена на сервер');
+    } catch (error) {
+        console.error('Ошибка при отправке модели на сервер:', error);
+    }
+}
+
+let loadBtn = document.getElementById('load-btn');
+loadBtn.addEventListener('click', () => onUpload());
 
 // Вызов функции анимации
 animate();
@@ -121,7 +170,6 @@ function getUrl(id) {
 }
 
 function loadModelToScene(url) {
-    clearScene();
     loadModel(url);
 }
 
